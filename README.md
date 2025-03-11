@@ -34,11 +34,20 @@ Qs:What is Expo Go
 (optional). Rebuild (needed when configuration or native code is modified.)
 
    ```bash
+    # This will remove ios and android build directories
     npx expo prebuild --clean;
     
     # This will handle pod install and building for you
     npx expo run:ios
+    # If the build fails to open on simulator,
+    npx expo start
    ```
+
+4. Adding third-party libraries:
+Once you have determined if the library is compatible with React Native, use Expo CLI to install the package:
+```bash
+  npx expo install <name_of_library>
+```
 
 In the output, you'll find options to open the app in a
 
