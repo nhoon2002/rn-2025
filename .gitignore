@@ -35,4 +35,8 @@ yarn-error.*
 # typescript
 *.tsbuildinfo
 
+# remove build folders from git tracking
+ios/
+android/
+
 app-example

@@ -2,7 +2,22 @@
 
 This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
 
+## Build with EAS
+```bash
+ eas login
+```
+```bash
+ eas build --platform ios|android|all
+```
+
 ## Get started
+[Dev notes]:
+20250311
+```
+Qs:What is Expo Go
+```
+
+
 
 1. Install dependencies
 
@@ -14,6 +29,15 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
 
    ```bash
     npx expo start
+   ```
+
+(optional). Rebuild (needed when configuration or native code is modified.)
+
+   ```bash
+    npx expo prebuild --clean;
+    
+    # This will handle pod install and building for you
+    npx expo run:ios
    ```
 
 In the output, you'll find options to open the app in a
