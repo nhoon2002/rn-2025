@@ -14,7 +14,10 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
 [Dev notes]:
 20250311
 ```
-Qs:What is Expo Go
+Q: What is Expo Go
+A: The Expo Go app is an optional stepping stone towards development builds. You can use it to quickly test your app while you are developing it, but it does not include all of the native code required to support every library. You can check React Native Directory to find a library compatible with Expo Go by visiting the website and verifying that it has a "✔️ Expo Go" tag. You can also enable the filter by Expo Go.
+
+
 ```
 
 
