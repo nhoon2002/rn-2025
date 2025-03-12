@@ -1,6 +1,39 @@
-import React, { useCallback } from "react";
-import { Text, View, TouchableOpacity, StyleSheet, useColorScheme } from "react-native";
-import { useFocusEffect } from "expo-router";
+import React, { useCallback, ReactElement } from "react";
+import { 
+  Text, 
+  View, 
+  TouchableOpacity, 
+  StyleSheet, 
+  useColorScheme, 
+  ColorSchemeName,
+  ViewStyle,
+  TextStyle,
+  Pressable
+} from "react-native";
+import { useFocusEffect, useRouter } from "expo-router";
+import { 
+  getEnvironmentConfig, 
+  useTheme,
+  EnvConfig
+} from "./constants/config";
+
+/**
+ * Interface for component props
+ * Currently empty as this component doesn't receive props,
+ * but defined for future extensibility
+ */
+interface HomeScreenProps {}
+
+/**
+ * Interface for the component's style sheet
+ * Defines the expected structure of the styles object
+ */
+interface HomeScreenStyles {
+  container: ViewStyle;
+  button: ViewStyle;
+  buttonText: TextStyle;
+  envLabel: TextStyle;
+}
 
 /**
  * Home screen component that displays a centered button
@@ -8,12 +41,21 @@ import { useFocusEffect } from "expo-router";
  * 
  * In Expo Router, the index.tsx file in the app directory becomes the home/default route
  * 
- * @returns {JSX.Element} The rendered component
+ * @returns {ReactElement} The rendered component
  */
-export default function HomeScreen() {
+export default function HomeScreen({}: HomeScreenProps): ReactElement {
   // Get the user's color scheme preference (light or dark mode)
   // TypeScript note: useColorScheme returns 'light' | 'dark' | null
-  const colorScheme = useColorScheme();
+  const colorScheme: ColorSchemeName = useColorScheme();
+  
+  // Get environment-specific configuration
+  const envConfig: EnvConfig = getEnvironmentConfig();
+  
+  // Get theme and styles using our custom hook
+  const { theme, styles: dynamicStyles } = useTheme(colorScheme);
+  
+  // Get the router for navigation
+  const router = useRouter();
   
   /**
    * useFocusEffect is a hook from Expo Router that runs code when a screen comes into focus
@@ -23,79 +65,93 @@ export default function HomeScreen() {
    * It only recreates the function if one of the dependencies in the array changes
    */
   useFocusEffect(
-    useCallback(() => {
+    useCallback((): (() => void) => {
       // This code runs every time the screen comes into focus (becomes visible)
       console.log("Home screen focused");
       
+      // Log environment information when screen is focused
+      console.log(`Environment: ${envConfig.environment}`);
+      console.log(`API URL: ${envConfig.apiUrl}`);
+      console.log(`Debug mode: ${envConfig.debug}`);
+      
       // The return function is a cleanup function that runs when the screen loses focus
-      return () => {
+      return (): void => {
         // Clean up any resources or listeners when navigating away
         console.log("Home screen unfocused");
       };
-    }, []) // Empty dependency array means this only depends on focus/unfocus events
+    }, [envConfig]) // Dependency on envConfig
   );
 
   /**
    * Handler for button press
-   * Currently a placeholder function that will be implemented later for navigation
+   * Navigates to the About screen
    * 
-   * In React Native, you use event handlers like this to respond to user interactions
+   * @returns {void}
    */
-  const handleButtonPress = () => {
-    // This will be replaced with navigation code later
-    console.log("Button pressed");
+  const handleNavigate = (): void => {
+    // Navigate to the About screen
+    router.push("/about");
     
-    // Example of what navigation might look like:
-    // navigation.navigate('Details', { id: 123 });
+    // Log navigation for debugging
+    console.log("Navigating to About screen");
   };
-
-  // Determine styles based on color scheme for dark/light mode support
-  // This is a common pattern for adapting UI to the user's preference
-  const isDarkMode = colorScheme === 'dark';
+  
+  /**
+   * Handler for test button press
+   * Navigates to the Test screen
+   * 
+   * @returns {void}
+   */
+  const handleNavigateToTest = (): void => {
+    // Navigate to the Test screen
+    router.push("/test");
+    
+    // Log navigation for debugging
+    console.log("Navigating to Test screen");
+  };
   
   return (
-    <View 
-      // In React Native, View is similar to a div in web development
-      // It's a container component for other components
-      style={[
-        // You can pass an array of styles to a component
-        // Later styles in the array override earlier ones if they conflict
-        styles.container, 
-        // This is an inline style that changes based on the color scheme
-        { backgroundColor: isDarkMode ? '#121212' : '#ffffff' }
-      ]}
-    >
-      <TouchableOpacity 
-        // TouchableOpacity is a wrapper that makes its children respond to touches
-        // It provides a visual feedback by reducing the opacity when pressed
-        style={[
-          styles.button,
-          { backgroundColor: isDarkMode ? '#ffffff' : '#000000' }
-        ]}
-        // onPress is similar to onClick in web development
-        onPress={handleButtonPress}
-        // These props help screen readers understand the purpose of this element
-        // Important for accessibility!
-        accessibilityLabel="Navigation button"
-        accessibilityHint="Navigates to another screen"
-      >
-        <Text 
-          // Text is the only component that can display text in React Native
-          // Unlike web, you can't just put text directly in a View
-          style={[
-            styles.buttonText,
-            { color: isDarkMode ? '#000000' : '#ffffff' }
-          ]}
-        >
-          Navigate
+    <View style={[styles.container, dynamicStyles.container]}>
+      {/* Environment indicator - only shown in development */}
+      {envConfig.debug && (
+        <Text style={dynamicStyles.envLabel}>
+          {envConfig.environment} Mode
         </Text>
-      </TouchableOpacity>
+      )}
+      
+      {/* Navigation buttons */}
+      <Pressable 
+        style={[styles.button, dynamicStyles.button]}
+        onPress={handleNavigate}
+        accessibilityLabel="About button"
+        accessibilityHint="Navigates to the About screen"
+        accessibilityRole="button"
+      >
+        <Text style={dynamicStyles.buttonText}>
+          Go to About
+        </Text>
+      </Pressable>
+      
+      <View style={{ height: 20 }} />
+      
+      <Pressable 
+        style={[styles.button, dynamicStyles.button]}
+        onPress={handleNavigateToTest}
+        accessibilityLabel="Test button"
+        accessibilityHint="Navigates to the Test screen"
+        accessibilityRole="button"
+      >
+        <Text style={dynamicStyles.buttonText}>
+          Go to Test
+        </Text>
+      </Pressable>
     </View>
   );
 }
 
 /**
- * Styles for the component
+ * Base styles for the component
+ * These styles don't change based on theme
  * 
  * In React Native, you use StyleSheet.create() instead of CSS
  * This provides better performance and error checking
@@ -105,7 +161,7 @@ export default function HomeScreen() {
  * - Styles are written in camelCase (backgroundColor instead of background-color)
  * - Flexbox is used for layout and is on by default (display: 'flex' is default)
  */
-const styles = StyleSheet.create({
+const styles = StyleSheet.create<HomeScreenStyles>({
   container: {
     // flex: 1 makes the component expand to fill available space
     // This is important for making the container fill the whole screen
@@ -115,26 +171,13 @@ const styles = StyleSheet.create({
     alignItems: "center",     // Centers items on the cross axis (horizontal in column layout)
   },
   button: {
-    // Padding adds space inside the component
-    paddingVertical: 12,   // 12 units of padding on top and bottom
-    paddingHorizontal: 24, // 24 units of padding on left and right
-    borderRadius: 4,       // Rounds the corners of the button
-    minWidth: 150,         // Ensures the button has a minimum width
-    alignItems: "center",  // Centers the text horizontally within the button
-    
-    // Platform-specific styling:
-    
-    // Add shadow for iOS - these properties only affect iOS
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 }, // Shadow direction and distance
-    shadowOpacity: 0.2,                    // How transparent the shadow is
-    shadowRadius: 2,                       // How blurry the shadow is
-    
-    // Add elevation for Android - this is the Android equivalent of shadow
-    elevation: 2,
+    // These styles will be merged with the dynamic styles
+    // Any properties defined in both will use the dynamic version
   },
   buttonText: {
-    fontSize: 16,       // Size of the text
-    fontWeight: "bold", // Makes the text bold
+    // Empty as we're using dynamic styles for text
   },
+  envLabel: {
+    // Empty as we're using dynamic styles for the environment label
+  }
 });

@@ -1,7 +1,8 @@
-import React, { useEffect } from "react";
+import React, { useEffect, ReactElement } from "react";
 import { Stack } from "expo-router";
-import { useColorScheme } from "react-native";
+import { useColorScheme, ColorSchemeName } from "react-native";
 import { StatusBar } from "expo-status-bar";
+import { getNavigationConfig, useTheme } from "./constants/config";
 
 /**
  * Root layout component that configures the navigation stack
@@ -11,20 +12,22 @@ import { StatusBar } from "expo-status-bar";
  * 
  * In Expo Router, _layout files define the structure and appearance of all screens within that directory.
  * 
- * @returns {JSX.Element} The configured Stack navigator
+ * @returns {ReactElement} The configured Stack navigator
  */
-export default function RootLayout() {
+export default function RootLayout(): ReactElement {
   // Get the user's color scheme preference (light or dark mode)
   // TypeScript note: useColorScheme returns 'light' | 'dark' | null
-  // const colorScheme = useColorScheme();
+  const colorScheme: ColorSchemeName = useColorScheme();
   
-  // For now, we're hardcoding to light mode to avoid TypeScript errors
-  // In a real app, you might want to handle the null case and use the actual device setting
-  const colorScheme = 'light'; // Hardcode to light for now.
+  // Get theme using our custom hook
+  const { theme } = useTheme(colorScheme);
+  
+  // Get navigation configuration based on current theme
+  const navConfig = getNavigationConfig(theme);
   
   // Set up any global app effects using the useEffect hook
   // This hook runs when the component mounts and when dependencies change
-  useEffect(() => {
+  useEffect((): (() => void) => {
     // This function runs when the component mounts (app starts)
     console.log("App initialized");
     
@@ -32,7 +35,7 @@ export default function RootLayout() {
     // Examples: analytics setup, notification listeners, etc.
     
     // The return function is a cleanup function that runs when the component unmounts
-    return () => {
+    return (): void => {
       // Clean up any listeners or services when the app closes
       console.log("App cleanup");
     };
@@ -48,9 +51,7 @@ export default function RootLayout() {
       {/* Status bar that adapts to color scheme */}
       {/* The StatusBar component from Expo controls the appearance of the device status bar */}
       <StatusBar 
-        style="dark" 
-        // We're using a fixed value instead of the conditional to fix TypeScript errors
-        // Original code: style={colorScheme === 'dark' ? 'light' : 'dark'}
+        style={theme.colors.background === '#ffffff' ? 'dark' : 'light'} 
       />
       
       {/* 
@@ -60,20 +61,9 @@ export default function RootLayout() {
       */}
       <Stack
         screenOptions={{
-          // Default options that apply to all screens in this stack
-          headerStyle: {
-            // Set header background color based on theme
-            backgroundColor: '#ffffff', // Light mode color
-            // Original code with conditional: backgroundColor: colorScheme === 'dark' ? '#121212' : '#ffffff',
-          },
-          headerTintColor: '#000000', // Text and icon color for header (light mode)
-          // Original code with conditional: headerTintColor: colorScheme === 'dark' ? '#ffffff' : '#000000',
-          headerTitleStyle: {
-            // Style for the header title text
-            fontWeight: 'bold',
-          },
-          // Animation for screen transitions - how screens enter and exit
-          animation: 'slide_from_right',
+          headerStyle: navConfig.headerOptions.headerStyle,
+          headerTintColor: navConfig.headerOptions.headerTintColor,
+          headerTitleStyle: navConfig.headerOptions.headerTitleStyle,
         }}
       >
         {/* 
@@ -87,6 +77,15 @@ export default function RootLayout() {
           options={{ 
             // Options specific to this screen
             headerShown: false // Hide the header completely on the home screen
+          }} 
+        />
+        
+        {/* About screen with custom title */}
+        <Stack.Screen 
+          name="/about" 
+          options={{ 
+            title: "About",
+            headerShown: true 
           }} 
         />
         
