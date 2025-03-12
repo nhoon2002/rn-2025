@@ -2,6 +2,28 @@
 
 This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
 
+## Environment Variables
+
+This project uses environment variables to manage API keys and other sensitive information. To set up your environment:
+
+1. Copy the `.env.example` file to a new file named `.env`:
+   ```bash
+   cp .env.example .env
+   ```
+
+2. Edit the `.env` file and replace the placeholder values with your actual API keys:
+   ```
+   TMDB_API_KEY=your_tmdb_api_key_here
+   TMDB_AUTH_TOKEN=your_tmdb_auth_token_here
+   ```
+
+3. Restart your development server after making changes to the `.env` file:
+   ```bash
+   npx expo start --clear
+   ```
+
+> **Note:** The `.env` file contains sensitive information and should never be committed to your repository. It's already added to `.gitignore` to prevent accidental commits.
+
 ## Build with EAS
 ```bash
  eas login

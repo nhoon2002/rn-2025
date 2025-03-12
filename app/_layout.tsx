@@ -2,7 +2,8 @@ import React, { useEffect, ReactElement } from "react";
 import { Stack } from "expo-router";
 import { useColorScheme, ColorSchemeName } from "react-native";
 import { StatusBar } from "expo-status-bar";
-import { getNavigationConfig, useTheme } from "./constants/config";
+import { getNavigationConfig, useTheme } from "../constants/config";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 /**
  * Root layout component that configures the navigation stack
@@ -42,7 +43,7 @@ export default function RootLayout(): ReactElement {
   }, []); // Empty dependency array means this runs once on mount
 
   return (
-    <>
+    <GestureHandlerRootView style={{ flex: 1 }}>
       {/* 
         React Fragment (<></>) lets us return multiple elements without adding extra nodes to the DOM
         This is useful when you need to return multiple components side by side
@@ -76,31 +77,38 @@ export default function RootLayout(): ReactElement {
           name="index" // This matches the filename (index.tsx)
           options={{ 
             // Options specific to this screen
+            title: "Home",
             headerShown: false // Hide the header completely on the home screen
           }} 
         />
         
         {/* About screen with custom title */}
         <Stack.Screen 
-          name="/about" 
+          name="about" 
           options={{ 
             title: "About",
             headerShown: true 
           }} 
         />
         
-        {/* 
-          You can add more Stack.Screen components here for other routes
-          Example:
-          <Stack.Screen 
-            name="details" 
-            options={{ 
-              title: "Details Page",
-              headerShown: true 
-            }} 
-          />
-        */}
+        {/* Carousel screen with custom title */}
+        <Stack.Screen 
+          name="carousel" 
+          options={{ 
+            title: "Carousel Examples",
+            headerShown: true // Hide header as we have our own header in the carousel screen
+          }} 
+        />
+        
+        {/* Test screen with custom title */}
+        <Stack.Screen 
+          name="test" 
+          options={{ 
+            title: "Test",
+            headerShown: true 
+          }} 
+        />
       </Stack>
-    </>
+    </GestureHandlerRootView>
   );
 }

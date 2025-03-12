@@ -9,7 +9,7 @@ import {
   ColorSchemeName 
 } from "react-native";
 import { useRouter } from "expo-router";
-import { useTheme } from "./constants/config";
+import { useTheme } from "../constants/config";
 
 /**
  * About screen component that displays information about the app

@@ -15,7 +15,7 @@ import {
   getEnvironmentConfig, 
   useTheme,
   EnvConfig
-} from "./constants/config";
+} from "../constants/config";
 
 /**
  * Interface for component props
@@ -83,12 +83,12 @@ export default function HomeScreen({}: HomeScreenProps): ReactElement {
   );
 
   /**
-   * Handler for button press
+   * Handler for About button press
    * Navigates to the About screen
    * 
    * @returns {void}
    */
-  const handleNavigate = (): void => {
+  const handleNavigateToAbout = (): void => {
     // Navigate to the About screen
     router.push("/about");
     
@@ -97,7 +97,21 @@ export default function HomeScreen({}: HomeScreenProps): ReactElement {
   };
   
   /**
-   * Handler for test button press
+   * Handler for Carousel button press
+   * Navigates to the Carousel screen
+   * 
+   * @returns {void}
+   */
+  const handleNavigateToCarousel = (): void => {
+    // Navigate to the Carousel screen
+    router.push("/carousel");
+    
+    // Log navigation for debugging
+    console.log("Navigating to Carousel screen");
+  };
+  
+  /**
+   * Handler for Test button press
    * Navigates to the Test screen
    * 
    * @returns {void}
@@ -122,13 +136,27 @@ export default function HomeScreen({}: HomeScreenProps): ReactElement {
       {/* Navigation buttons */}
       <Pressable 
         style={[styles.button, dynamicStyles.button]}
-        onPress={handleNavigate}
+        onPress={handleNavigateToAbout}
         accessibilityLabel="About button"
         accessibilityHint="Navigates to the About screen"
         accessibilityRole="button"
       >
         <Text style={dynamicStyles.buttonText}>
           Go to About
+        </Text>
+      </Pressable>
+      
+      <View style={{ height: 20 }} />
+      
+      <Pressable 
+        style={[styles.button, dynamicStyles.button]}
+        onPress={handleNavigateToCarousel}
+        accessibilityLabel="Carousel button"
+        accessibilityHint="Navigates to the Carousel screen"
+        accessibilityRole="button"
+      >
+        <Text style={dynamicStyles.buttonText}>
+          Go to Carousel
         </Text>
       </Pressable>
       
